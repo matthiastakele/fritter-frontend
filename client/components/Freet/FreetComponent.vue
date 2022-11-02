@@ -48,6 +48,7 @@
     >
       {{ freet.content }}
     </p>
+    <LikeComponent v-bind:freetId="this.freet._id" />
     <p class="info">
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
@@ -65,8 +66,11 @@
 </template>
 
 <script>
+import LikeComponent from '@/components/Like/LikeComponent.vue'
+
 export default {
   name: 'FreetComponent',
+  components: {LikeComponent},
   props: {
     // Data from the stored freet
     freet: {
@@ -168,6 +172,8 @@ export default {
 
 <style scoped>
 .freet {
+    border-radius: 25px;
+    margin: 10px;
     border: 1px solid #111;
     padding: 20px;
     position: relative;

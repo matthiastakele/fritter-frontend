@@ -97,6 +97,7 @@ export default {
           const text = await r.text();
           const res = text ? JSON.parse(text) : {user: null};
           this.$store.commit('setUsername', res.user ? res.user.username : null);
+          this.$store.commit('setUserId', res.user._id);
         }
 
         if (this.refreshFreets) {
@@ -117,8 +118,9 @@ export default {
 
 <style scoped>
 form {
+  border-radius: 25px;
   border: 1px solid #111;
-  padding: 0.5rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

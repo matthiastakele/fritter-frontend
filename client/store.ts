@@ -11,7 +11,9 @@ const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
     freets: [], // All freets created in the app
+    likes: [],
     username: null, // Username of the logged in user
+    userId: null,
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
   mutations: {
@@ -31,6 +33,13 @@ const store = new Vuex.Store({
        */
       state.username = username;
     },
+    setUserId(state, userId){
+      /**
+       * Update the stored userId to the specified one.
+       * @param userId - new userId to set
+       */
+      state.userId = userId;
+    },
     updateFilter(state, filter) {
       /**
        * Update the stored freets filter to the specified one.
@@ -44,6 +53,13 @@ const store = new Vuex.Store({
        * @param freets - Freets to store
        */
       state.freets = freets;
+    },
+    updateLikes(state, likes) {
+      /**
+       * Update the stored freets to the provided likes.
+       * @param likes - Likes to store
+       */
+      state.likes = likes;
     },
     async refreshFreets(state) {
       /**

@@ -12,6 +12,7 @@ export default {
   methods: {
     async submit() {
       const url = this.value ? `/api/freets?author=${this.value}` : '/api/freets';
+      const url2 = '/api/likes';
       try {
         const r = await fetch(url);
         const res = await r.json();
@@ -19,8 +20,15 @@ export default {
           throw new Error(res.error);
         }
 
+        const r2 = await fetch(url2);
+        const res2 = await r2.json();
+        if(!r2.ok){
+          throw new Error(res2.error);
+        }
+
         this.$store.commit('updateFilter', this.value);
         this.$store.commit('updateFreets', res);
+        this.$store.commit('updateLikes', res2)
       } catch (e) {
         if (this.value === this.$store.state.filter) {
           // This section triggers if you filter to a user but they
