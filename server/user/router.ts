@@ -28,6 +28,19 @@ router.get(
   }
 );
 
+// Get userId from username
+router.get(
+  '/userIds/:username?',
+  [],
+  async (req: Request, res: Response) => {
+    const user = await UserCollection.findOneByUsername(req.params.username);
+    const userId = user._id;
+    res.status(200).json({
+      userId
+    });
+  }
+);
+
 /**
  * Sign in user.
  *

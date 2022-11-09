@@ -5,22 +5,29 @@
 <template>
   <nav>
     <div class="left">
-      <img src="../../public/logo.svg">
+      <img class = "logo" src="../../public/logo.svg">
       <h1 class="title">
         Fritter
       </h1>
     </div>
     <div class="right">
-      <router-link to="/">
+      <router-link @click.native = "goToHome" class = "page_link" to="/">
         Home
       </router-link>
-      <router-link
+      <router-link @click.native="goToProfile" class = "page_link"
+        v-if="$store.state.username"
+        to="/profile"
+      >
+        Profile
+      </router-link>
+      <p v-else></p>
+      <router-link class = "page_link"
         v-if="$store.state.username"
         to="/account"
       >
         Account
       </router-link>
-      <router-link
+      <router-link class = "page_link"
         v-else
         to="/login"
       >
@@ -39,10 +46,30 @@
   </nav>
 </template>
 
+<script>
+export default {
+  name: "NavBar",
+  data() {
+    return {
+    };
+  },
+  methods: {
+    async goToProfile(){
+      this.$store.commit('refreshProfileFreets', this.$store.state.username);
+      this.$store.commit('refreshLikes', this.$store.state.userId);
+      this.$store.commit('updateProfileUsername', this.$store.state.username);
+    },
+    goToHome(){
+      this.$store.commit('setAlbumChosen', []);
+    }
+  }
+}
+</script>
+
 <style scoped>
 nav {
     padding: 1vw 2vw;
-    background-color: #ccc;
+    background-color: rgb(153, 153, 255);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,13 +77,24 @@ nav {
 }
 
 .title {
-    font-size: 32px;
+    color: rgb(51, 51, 204);
+    font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 1.75em;
     margin: 0 5px;
+}
+
+.page_link{
+  color: #353535;
+  font-weight: 600;
+  font-size: 1em;
+  text-decoration: none;
+  font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 img {
     height: 32px;
 }
+
 
 .left {
 	display: flex;

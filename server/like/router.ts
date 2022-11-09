@@ -59,6 +59,30 @@ router.post(
 );
 
 /**
+ * Delete all likes for a freet
+ *
+ * @name DELETE /api/likes
+ *
+ * @param {string} freetId - The id of a freet
+ * @return {string} - A success message
+ * @throws {403} - If the user is not logged in or is not the author of
+ *                 the freet
+ * @throws {404} - If the freetId is not valid
+ */
+ router.delete(
+  '/delete/:freetId?',
+  [
+    userValidator.isUserLoggedIn
+  ],
+  async (req: Request, res: Response) => {
+    await LikeCollection.deleteMany(req.params.freetId);
+    res.status(200).json({
+      message: 'You deleted all likes from freet successfully.',
+    });
+  }
+);
+
+/**
  * Get likes for a freet.
  *
  * @name GET /api/likes/freets/:freetId

@@ -87,6 +87,16 @@ class LikeCollection {
   const like = await LikeModel.findOne({userId: userId, freetId: freetId});
   return like != null;
 }
+
+/**
+   * Delete all the likes by the freetId
+   *
+   * @param {string} freetId - The id of freet
+   */
+ static async deleteMany(freetId: Types.ObjectId | string): Promise<void> {
+  await LikeModel.deleteMany({freetId});
+}
+
 }
 
 export default LikeCollection;

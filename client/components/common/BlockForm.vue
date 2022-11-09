@@ -12,7 +12,7 @@
         :key="field.id"
       >
         <label :for="field.id">{{ field.label }}:</label>
-        <textarea
+        <textarea :placeholder= message
           v-if="field.id === 'content'"
           :name="field.id"
           :value="field.value"
@@ -30,7 +30,15 @@
     <article v-else>
       <p>{{ content }}</p>
     </article>
-    <button
+    <div v-if = "hasAlbums" class="grid-container">
+      <h3>Add Freet to an Album?</h3>
+      <AlbumComponent class = "grid-item"
+          v-for="album in $store.state.albums"
+          :key="album.id"
+          :album="album"
+        />
+      </div>
+    <button class = "pretty_button"
       type="submit"
     >
       {{ title }}
@@ -48,13 +56,15 @@
 </template>
 
 <script>
-
+import AlbumComponent from '@/components/Album/AlbumComponent.vue';
 export default {
   name: 'BlockForm',
+  components: {AlbumComponent},
   data() {
     /**
      * Options for submitting this form.
      */
+    let messages = ["Share something! 😄", "✨Be you.✨", "What's on your mind? 🤔", "Use your voice 📣", "Post as you please 💃"];
     return {
       url: '', // Url to submit form to
       method: 'GET', // Form request method
@@ -62,7 +72,8 @@ export default {
       setUsername: false, // Whether or not stored username should be updated after form submission
       refreshFreets: false, // Whether or not stored freets should be updated after form submission
       alerts: {}, // Displays success/error messages encountered during form submission
-      callback: null // Function to run after successful form submission
+      callback: null, // Function to run after successful form submission
+      message: messages[Math.floor(Math.random() * messages.length)]
     };
   },
   methods: {
@@ -90,6 +101,7 @@ export default {
         if (!r.ok) {
           // If response is not okay, we throw an error and enter the catch block
           const res = await r.json();
+          const freetId = res.freet._id;
           throw new Error(res.error);
         }
 
@@ -101,7 +113,23 @@ export default {
         }
 
         if (this.refreshFreets) {
+          const res = await r.json();
+          const freetId = res.freet._id;
+          let options2 = {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({freetId: freetId}),
+          };
+          const albumId = this.$store.state.albumChosen._id;
+          await fetch(`/api/albums/${albumId}/freets`, options2);
           this.$store.commit('refreshFreets');
+          this.$store.commit('refreshProfileFreets');
+          this.$store.commit('refreshAlbums');
+          this.$store.commit('setAlbumChosen', []);
+        }
+
+        if(this.signOut){
+          this.$store.reset();
         }
 
         if (this.callback) {
@@ -117,9 +145,10 @@ export default {
 </script>
 
 <style scoped>
+@import "/components/global_css.css";
 form {
   border-radius: 25px;
-  border: 1px solid #111;
+  border: 1px solid #111; 
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -149,5 +178,17 @@ form h3 {
 textarea {
    font-family: inherit;
    font-size: inherit;
+}
+.grid-container {
+  display: grid;
+  margin-right: 75%;
+  gap: 50px;
+  grid-auto-flow: column;
+}
+.grid-item {
+  font-size: 10px;
+  width: 125px;
+  height: 125px;
+  text-align: center;
 }
 </style>

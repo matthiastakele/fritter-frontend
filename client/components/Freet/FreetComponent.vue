@@ -6,32 +6,40 @@
     class="freet"
   >
     <header>
-      <h3 class="author">
-        @{{ freet.author }}
-      </h3>
+      <div class = "top">
+        <div class = "left">
+          <router-link @click.native = "goToProfile" to="/profile"><span class="profilePic">{{freet.author.charAt(0).toUpperCase()}}</span></router-link>
+          <FollowComponent v-bind:username="this.freet.author" v-if="$store.state.username !== freet.author"/>
+        </div>
+        <div class = "right"> 
+          <h3 class="author">
+            @{{ freet.author }}
+          </h3>
+        </div>
+      </div>
       <div
         v-if="$store.state.username === freet.author"
         class="actions"
       >
-        <button
+        <button class = "pretty_button"
           v-if="editing"
           @click="submitEdit"
         >
           ✅ Save changes
         </button>
-        <button
+        <button class = "pretty_button"
           v-if="editing"
           @click="stopEditing"
         >
           🚫 Discard changes
         </button>
-        <button
+        <button class = "pretty_button"
           v-if="!editing"
           @click="startEditing"
         >
           ✏️ Edit
         </button>
-        <button @click="deleteFreet">
+        <button class = "pretty_button" @click="deleteFreet"> 
           🗑️ Delete
         </button>
       </div>
@@ -67,10 +75,11 @@
 
 <script>
 import LikeComponent from '@/components/Like/LikeComponent.vue'
+import FollowComponent from '@/components/Follow/FollowComponent.vue'
 
 export default {
   name: 'FreetComponent',
-  components: {LikeComponent},
+  components: {LikeComponent, FollowComponent},
   props: {
     // Data from the stored freet
     freet: {
@@ -82,7 +91,8 @@ export default {
     return {
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
-      alerts: {} // Displays success/error messages encountered during freet modification
+      alerts: {}, // Displays success/error messages encountered during freet modification,
+      author_id: null
     };
   },
   methods: {
@@ -100,7 +110,7 @@ export default {
       this.editing = false;
       this.draft = this.freet.content;
     },
-    deleteFreet() {
+    async deleteFreet() {
       /**
        * Deletes this freet.
        */
@@ -113,6 +123,7 @@ export default {
         }
       };
       this.request(params);
+      // delete likes when you delete freet
     },
     submitEdit() {
       /**
@@ -149,7 +160,13 @@ export default {
       if (params.body) {
         options.body = params.body;
       }
-
+      if(params.method === 'DELETE'){
+        let options = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      };
+        await fetch(`/api/likes/delete/${this.freet._id}`, options);
+      }
       try {
         const r = await fetch(`/api/freets/${this.freet._id}`, options);
         if (!r.ok) {
@@ -159,18 +176,32 @@ export default {
 
         this.editing = false;
         this.$store.commit('refreshFreets');
+        this.$store.commit('refreshProfileFreets');
 
         params.callback();
       } catch (e) {
         this.$set(this.alerts, e, 'error');
         setTimeout(() => this.$delete(this.alerts, e), 3000);
       }
+    },
+    async goToProfile(){
+      this.$store.commit('updateProfileUsername', this.freet.author);
+      this.$store.commit('refreshProfileFreets');
+      let options = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      };
+      let r = await fetch(`/api/users/userIds/${this.freet.author}`, options);
+      let res = await r.json();
+      this.authorId = res.userId;
+      this.$store.commit('refreshLikes', this.authorId);
     }
   }
 };
 </script>
 
 <style scoped>
+@import "/components/global_css.css";
 .freet {
     border-radius: 25px;
     margin: 10px;
@@ -178,4 +209,33 @@ export default {
     padding: 20px;
     position: relative;
 }
+
+.top{
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  width: 15%;
+}
+
+
+.top .left, .top .right{
+  display: flex;
+  flex: 1;
+}
+
+span.profilePic{
+  background: rgb(153, 153, 255);
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  color: #353535;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 35px;
+  line-height: 60px;
+  text-align: center;
+  width: 60px;
+}
 </style>
+

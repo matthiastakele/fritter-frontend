@@ -35,7 +35,7 @@
           <GetFreetsForm
             ref="getFreetsForm"
             value="author"
-            placeholder="🔍 Filter by author (optional)"
+            placeholder="🔍 Filter by author"
             button="🔄 Get freets"
           />
         </div>
@@ -43,11 +43,13 @@
       <section
         v-if="$store.state.freets.length"
       >
+      <div class="reverseorder">
         <FreetComponent
           v-for="freet in $store.state.freets"
           :key="freet.id"
           :freet="freet"
         />
+      </div>
       </section>
       <article
         v-else
@@ -67,12 +69,15 @@ export default {
   name: 'FreetPage',
   components: {FreetComponent, GetFreetsForm, CreateFreetForm},
   mounted() {
+    this.$store.commit('refreshAlbums');
+    this.$store.commit('setAlbumChosen', []);
     this.$refs.getFreetsForm.submit();
   }
 };
 </script>
 
 <style scoped>
+@import "/components/global_css.css";
 section {
   display: flex;
   flex-direction: column;
@@ -92,5 +97,10 @@ section .scrollbox {
   flex: 1 0 50vh;
   padding: 3%;
   overflow-y: scroll;
+}
+
+.reverseorder {
+  display: flex;
+  flex-direction: column-reverse;
 }
 </style>

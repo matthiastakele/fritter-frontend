@@ -3,12 +3,12 @@
 
 <template>
   <form @submit.prevent="submit">
-    <input
+    <input 
       v-model="value"
       type="text"
       :placeholder="placeholder"
     >
-    <button
+    <button class = "pretty_button"
       type="submit"
     >
       {{ button }}
@@ -45,6 +45,7 @@ export default {
 </script>
 
 <style scoped>
+@import "/components/global_css.css";
 form {
     display: flex;
     position: relative;
@@ -53,5 +54,6 @@ form {
 input {
     padding: 0 5px;
     min-width: 200px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
 }
 </style>

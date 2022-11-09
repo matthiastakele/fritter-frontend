@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       liked: false,
-      total: 0,
+      total: null,
     };
   },
   async created() {
@@ -43,10 +43,8 @@ export default {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ freetId: this.freetId }),
       };
-
       await fetch(`/api/likes`, options);
       this.liked = this.liked ? false : true;
-
       this.total += 1;
     },
     async submitUnlike() {
@@ -55,9 +53,8 @@ export default {
         headers: { "Content-Type": "application/json" },
       };
 
-      let r = await fetch(`/api/likes/${this.freetId}`, options);
+      await fetch(`/api/likes/${this.freetId}`, options);
       this.liked = this.liked ? false : true;
-
       this.total -= 1;
     },
   },
@@ -71,7 +68,7 @@ export default {
 .notLikeBtn {
   background-color: transparent;
   border: none; /* Remove borders */
-  font-size: 20px; /* Set a font size */
+  font-size: 25px; /* Set a font size */
   cursor: pointer; /* Mouse pointer on hover */
 }
 
@@ -79,7 +76,11 @@ export default {
   background-color: transparent;
   color: darksalmon;
   border: none; /* Remove borders */
-  font-size: 20px; /* Set a font size */
+  font-size: 25px; /* Set a font size */
   cursor: pointer; /* Mouse pointer on hover */
+}
+
+p{
+  font-size: 22px;
 }
 </style>

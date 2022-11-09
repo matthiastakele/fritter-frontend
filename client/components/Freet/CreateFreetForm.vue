@@ -11,6 +11,7 @@ export default {
       url: '/api/freets',
       method: 'POST',
       hasBody: true,
+      hasAlbums: (this.$store.state.albums.length != 0 ? true : false),
       fields: [
         {id: 'content', label: 'Content', value: ''}
       ],

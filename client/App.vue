@@ -40,6 +40,7 @@ body {
   padding: 0;
   margin: 0;
   font-size: 1.2em;
+  background-color: #FAF9F6;
 }
 
 main {
@@ -68,10 +69,10 @@ main {
 }
 
 .alerts .error {
-    background-color: rgb(166, 23, 33);
+    background-color: #DE3163;
 }
 
 .alerts .success {
-    background-color: rgb(45, 135, 87);
+    background-color: #32de84;
 }
 </style>

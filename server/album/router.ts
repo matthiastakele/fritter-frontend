@@ -118,8 +118,7 @@ router.delete(
  router.put(
   '/:albumId?/freets',
   [
-    userValidator.isUserLoggedIn,
-    freetValidator.isFreetExists
+    userValidator.isUserLoggedIn
   ],
   async (req: Request, res: Response) => {
     await AlbumCollection.addFreet(req.params.albumId, req.body.freetId);
@@ -224,7 +223,7 @@ router.delete(
 );
 
 /**
- * Get all albums of user
+ * Get all albums from userId
  *
  * @name GET /api/albums/user
  *
@@ -234,13 +233,12 @@ router.delete(
  *
  */
  router.get(
-  '/user',
+  '/:userId?',
   [
     userValidator.isUserLoggedIn,
   ],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const albums = await AlbumCollection.findAllByUserId(userId);
+    const albums = await AlbumCollection.findAllByUserId(req.params.userId);
     res.status(200).json(albums);
   }
 );
